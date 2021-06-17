@@ -657,7 +657,6 @@ CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
 		$(call cc-disable-warning,maybe-uninitialized,)
 CFLAGS_KCOV	:= $(call cc-option,-fsanitize-coverage=trace-pc,)
 export CFLAGS_GCOV CFLAGS_KCOV
-
 # Make toolchain changes before including arch/$(SRCARCH)/Makefile to ensure
 # ar/cc/ld-* macros return correct values.
 ifdef CONFIG_LTO_CLANG
@@ -681,21 +680,28 @@ ARCH_AFLAGS :=
 ARCH_CFLAGS :=
 include arch/$(SRCARCH)/Makefile
 
-KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
-KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
-KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
-KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
-KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
-KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-macro-redefined)
-KBUILD_CFLAGS    += $(call cc-option, -Werror=strict-prototypes)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-misleading-indentation)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-int-in-bool-context)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-strict-prototypes)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-sometimes-uninitialized)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-old-style-definition)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-missing-prototypes)
-KBUILD_CFLAGS    += $(call cc-option, -Wno-missing-declarations)
+KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+KBUILD_CFLAGS += $(call cc-disable-warning, duplicate-decl-specifier)
+KBUILD_CFLAGS += -fno-builtin
+KBUILD_CFLAGS += $(call cc-option, -Wno-undefined-optimized)
+KBUILD_CFLAGS += $(call cc-option, -Wno-tautological-constant-out-of-range-compare)
+KBUILD_CFLAGS += $(call cc-option, -mllvm -disable-struct-const-merge)
+KBUILD_CFLAGS += $(call cc-option, -Wno-macro-redefined)
+KBUILD_CFLAGS += $(call cc-option, -Werror=strict-prototypes)
+KBUILD_CFLAGS += $(call cc-option, -Werror=all)
+KBUILD_CFLAGS += $(call cc-option, -Wno-misleading-indentation)
+KBUILD_CFLAGS += $(call cc-option, -Wno-int-in-bool-context)
+KBUILD_CFLAGS += $(call cc-option, -add,CFLAGS,CC,-Wno-int-in-bool-context)
+KBUILD_CFLAGS += $(call cc-option, -Wno-strict-prototypes)
+KBUILD_CFLAGS += $(call cc-option, -Wno-sometimes-uninitialized)
+KBUILD_CFLAGS += $(call cc-option, -Wno-old-style-definition)
+KBUILD_CFLAGS += $(call cc-option, -Wno-missing-prototypes)
+KBUILD_CFLAGS += $(call cc-option, -Wno-missing-declarations)
+KBUILD_CFLAGS += $(call cc-option, -Wno-fPIC)
+KBUILD_CFLAGS += $(call cc-option, -Wno--fPIC)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 else
@@ -761,6 +767,15 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
 KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
 KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
 KBUILD_CFLAGS += $(call cc-disable-warning, duplicate-decl-specifier)
+KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+KBUILD_CFLAGS += $(call cc-option,-fno-delete-null-pointer-checks,)
+KBUILD_CFLAGS += $(call cc-disable-warning,frame-address,)
+KBUILD_CFLAGS += $(call cc-disable-warning, format-truncation)
+KBUILD_CFLAGS += $(call cc-disable-warning, format-overflow)
+KBUILD_CFLAGS += $(call cc-disable-warning, int-in-bool-context)
+KBUILD_CFLAGS += $(call cc-disable-warning, attribute-alias)
+KBUILD_CFLAGS += $(call cc-disable-warning, strict-prototypes)
+KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
 KBUILD_CFLAGS += -fno-builtin
 KBUILD_CFLAGS += $(call cc-option, -Wno-undefined-optimized)
 KBUILD_CFLAGS += $(call cc-option, -Wno-tautological-constant-out-of-range-compare)
